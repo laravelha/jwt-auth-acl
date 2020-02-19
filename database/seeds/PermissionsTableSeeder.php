@@ -28,7 +28,9 @@ class PermissionsTableSeeder extends Seeder
      */
     protected function getAdminRole(): Role
     {
-        return Role::find(1) ? Role::find(1) : factory(Role::class)->create(['name' => 'Admin', 'description' => 'All privileges']);
+        return Role::find(1)
+            ? Role::find(1)
+            : factory(Role::class)->create(['name' => 'Admin', 'description' => 'All privileges']);
     }
 
     /**
@@ -37,7 +39,6 @@ class PermissionsTableSeeder extends Seeder
     protected function createPermissions(Role $role): void
     {
         foreach (RouteFacade::getRoutes() as $route) {
-
             if ($this->shouldIgnore($route)) {
                 continue;
             }
@@ -56,7 +57,9 @@ class PermissionsTableSeeder extends Seeder
      */
     protected function getUserAdmin(): User
     {
-        return User::find(1) ? User::find(1) : factory(User::class)->create(['name' => 'Admin', 'email' => 'admin@laravelha.com']);
+        return User::find(1)
+            ? User::find(1)
+            : factory(User::class)->create(['name' => 'Admin', 'email' => 'admin@laravelha.com']);
     }
 
     /**
