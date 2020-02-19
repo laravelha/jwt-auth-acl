@@ -13,3 +13,11 @@ class Controller extends BaseController
     use DispatchesJobs;
     use ValidatesRequests;
 }
+
+/**
+ *  @OA\SecurityScheme(
+ *      type="http",
+ *      scheme="bearer",
+ *      securityScheme="bearerAuth",
+ *  )
+ */
