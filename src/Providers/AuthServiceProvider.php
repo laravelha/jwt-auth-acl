@@ -2,7 +2,11 @@
 
 namespace Laravelha\Auth\Providers;
 
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
+use Laravelha\Auth\Models\Permission;
+use Laravelha\Auth\Models\User;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -20,6 +24,8 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->loadMigrationsFrom(self::ROOT_PATH . '/database/migrations');
         $this->loadFactoriesFrom(self::ROOT_PATH . '/database/factories');
+
+        $this->registerPermissions();
 
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
@@ -41,5 +47,27 @@ class AuthServiceProvider extends ServiceProvider
         $this->publishes([
             self::ROOT_PATH . '/database/' . $permissionSeederPath => database_path($permissionSeederPath),
         ], 'auth-seeds');
+    }
+
+    /**
+     * Define Permissions with Gate
+     *
+     * @return void
+     */
+    protected function registerPermissions()
+    {
+        try {
+            Schema::hasTable('permissions');
+
+            foreach (Permission::all() as $permission) {
+                Gate::define($permission->name, function (User $user) use ($permission) {
+                    return $user->roles->each(function ($role) use ($permission) {
+                        return $role->permissions->contains($permission);
+                    });
+                });
+            }
+        } catch (\Exception $exception) {
+            return;
+        }
     }
 }
