@@ -14,4 +14,5 @@ the same name of the route within any role he has
 * Set `providers.users.model` to `Laravelha\Auth\Models\User::class` or Publish config `php artisan vendor:publish --foce --tag jwt-auth-acl-config`
 * Set `guards.api.driver` to `api` or Publish config `php artisan vendor:publish --foce --tag jwt-auth-acl-config`
 * Run `php artisan db:seed --class=PermissionsTableSeeder` to populate permissions table
-* Add middleware `acl` on routes
+* Run `php artisan jwt:secret`
+* Set `config/l5-swagger.php` to read annotations on `vendor/laravelha/jwt-auth-acl/src`
