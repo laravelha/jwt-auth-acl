@@ -1,0 +1,44 @@
+{
+    "name": "laravelha/jwt-auth-acl",
+    "description": "JWT Auth ACL",
+    "keywords": ["jwt", "auth", "acl"],
+    "require": {
+        "php": "^7.2",
+        "darkaonline/l5-swagger": "^6.0",
+        "illuminate/support": "^6.0",
+        "laravelha/support": "^1.0.0",
+        "tymon/jwt-auth": "dev-develop"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^4.0",
+        "phpunit/phpunit": "^8.5",
+        "squizlabs/php_codesniffer": "3.*",
+        "phpstan/phpstan": "^0.12.11"
+    },
+    "autoload": {
+        "psr-4": {
+            "Laravelha\\Auth\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Laravelha\\Auth\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Laravelha\\Auth\\Providers\\AuthServiceProvider",
+                "Laravelha\\Auth\\Providers\\RouteServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "scripts": {
+        "phpcs": "vendor/bin/phpcs --standard=psr12 src tests",
+        "phpcbf": "vendor/bin/phpcbf --standard=psr12 src tests",
+        "phpunit": "vendor/bin/phpunit",
+        "phpstan": "vendor/bin/phpstan analyse --level=5 src tests"
+    }
+}
