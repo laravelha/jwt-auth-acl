@@ -8,4 +8,6 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('me', 'AuthController@me')->name('me');
 
     Route::apiResource('users', 'UserController');
+
+    Route::apiResource('roles', 'RoleController');
 });
