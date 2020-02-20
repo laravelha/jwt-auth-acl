@@ -27,6 +27,8 @@ class AuthServiceProvider extends ServiceProvider
 
         $this->registerPermissions();
 
+        $this->aliasMiddleware();
+
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
         }
@@ -69,5 +71,9 @@ class AuthServiceProvider extends ServiceProvider
         } catch (\Exception $exception) {
             return;
         }
+    }
+
+    protected function aliasMiddleware()
+    {
     }
 }

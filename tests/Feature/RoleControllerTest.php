@@ -93,8 +93,7 @@ class RoleControllerTest extends TestCase
         $this->assertDatabaseHas('roles', $roleFake->getAttributes());
 
         $data = $response->decodeResponseJson()['data'];
-        foreach ($attributes['permissions'] as $permissionId)
-        {
+        foreach ($attributes['permissions'] as $permissionId) {
             $this->assertDatabaseHas('permission_role', [
                 'permission_id' => $permissionId,
                 'role_id' => $data['id'],
@@ -177,8 +176,7 @@ class RoleControllerTest extends TestCase
         $this->assertDatabaseHas('roles', $roleFakes->last()->getAttributes());
 
         $data = $response->decodeResponseJson()['data'];
-        foreach ($attributes['permissions'] as $permissionId)
-        {
+        foreach ($attributes['permissions'] as $permissionId) {
             $this->assertDatabaseHas('permission_role', [
                 'permission_id' => $permissionId,
                 'role_id' => $data['id'],

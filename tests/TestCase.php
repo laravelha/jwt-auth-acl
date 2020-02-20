@@ -85,6 +85,7 @@ abstract class TestCase extends Orchestra
      */
     protected function createPermissions()
     {
+        $this->permissions[] = factory(Permission::class)->create(['name' => 'api.auth.logout']);
         $this->permissions[] = factory(Permission::class)->create(['name' => 'api.auth.refresh']);
         $this->permissions[] = factory(Permission::class)->create(['name' => 'api.auth.me']);
 

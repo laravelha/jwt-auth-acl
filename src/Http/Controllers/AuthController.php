@@ -81,8 +81,6 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        $this->authorize(request()->route()->getName());
-
         return $this->respondWithToken(auth('api')->refresh());
     }
 
@@ -106,8 +104,6 @@ class AuthController extends Controller
      */
     public function me(): JsonResponse
     {
-        $this->authorize(request()->route()->getName());
-
         return response()->json(['user' => auth('api')->user()]);
     }
 

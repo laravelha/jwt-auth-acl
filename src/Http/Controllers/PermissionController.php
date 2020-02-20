@@ -78,8 +78,6 @@ class PermissionController extends Controller
      */
     public function index()
     {
-        $this->authorize(request()->route()->getName());
-
         $limit = request()->has('limit') ? request()->get('limit') : null;
         return new PermissionCollection(Permission::paginate($limit));
     }
@@ -154,8 +152,6 @@ class PermissionController extends Controller
      */
     public function show(Permission $permission)
     {
-        $this->authorize(request()->route()->getName());
-
         return new PermissionResource($permission);
     }
 
@@ -230,8 +226,6 @@ class PermissionController extends Controller
      */
     public function destroy(Permission $permission)
     {
-        $this->authorize(request()->route()->getName());
-
         $permission->delete();
 
         return response()->json(null, 204);

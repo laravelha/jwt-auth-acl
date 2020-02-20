@@ -4,6 +4,7 @@ namespace Laravelha\Auth\Providers;
 
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Route;
+use Laravelha\Auth\Http\Middleware\Authorize;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -28,6 +29,8 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->aliasMiddleware('ha.acl', Authorize::class);
+
         parent::boot();
     }
 

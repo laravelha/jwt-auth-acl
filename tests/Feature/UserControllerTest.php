@@ -97,8 +97,7 @@ class UserControllerTest extends TestCase
         $this->assertDatabaseHas('users', $userFake->getAttributes());
 
         $data = $response->decodeResponseJson()['data'];
-        foreach ($attributes['roles'] as $roleId)
-        {
+        foreach ($attributes['roles'] as $roleId) {
             $this->assertDatabaseHas('role_user', [
                 'role_id' => $roleId,
                 'user_id' => $data['id'],

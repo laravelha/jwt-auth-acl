@@ -78,8 +78,6 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $this->authorize(request()->route()->getName());
-
         $limit = request()->has('limit') ? request()->get('limit') : null;
         return new RoleCollection(Role::paginate($limit));
     }
@@ -154,8 +152,6 @@ class RoleController extends Controller
      */
     public function show(Role $role)
     {
-        $this->authorize(request()->route()->getName());
-
         return new RoleResource($role);
     }
 
@@ -230,8 +226,6 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
-        $this->authorize(request()->route()->getName());
-
         $role->delete();
 
         return response()->json(null, 204);

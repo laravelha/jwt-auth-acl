@@ -78,8 +78,6 @@ class UserController extends Controller
      */
     public function index()
     {
-        $this->authorize(request()->route()->getName());
-
         $limit = request()->has('limit') ? request()->get('limit') : null;
         return new UserCollection(User::paginate($limit));
     }
@@ -157,8 +155,6 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        $this->authorize(request()->route()->getName());
-
         return new UserResource($user);
     }
 
@@ -236,8 +232,6 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        $this->authorize(request()->route()->getName());
-
         $user->delete();
 
         return response()->json(null, 204);
