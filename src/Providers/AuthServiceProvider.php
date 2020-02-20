@@ -27,8 +27,6 @@ class AuthServiceProvider extends ServiceProvider
 
         $this->registerPermissions();
 
-        $this->aliasMiddleware();
-
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
         }
@@ -62,18 +60,12 @@ class AuthServiceProvider extends ServiceProvider
             Schema::hasTable('permissions');
 
             foreach (Permission::all() as $permission) {
-                Gate::define($permission->name, function (User $user) use ($permission) {
-                    return $user->roles->each(function ($role) use ($permission) {
-                        return $role->permissions->contains($permission);
-                    });
+                Gate::define($permission->verb . '|' . $permission->uri, function (User $user) use ($permission) {
+                    return $user->hasPermission($permission);
                 });
             }
         } catch (\Exception $exception) {
             return;
         }
-    }
-
-    protected function aliasMiddleware()
-    {
     }
 }

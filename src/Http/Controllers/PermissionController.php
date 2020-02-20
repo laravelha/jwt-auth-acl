@@ -93,8 +93,8 @@ class PermissionController extends Controller
      *         required=true,
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="name", type="string"),
-     *             @OA\Property(property="description", type="string"),
+     *             @OA\Property(property="verb", type="string"),
+     *             @OA\Property(property="uri", type="string"),
      *       )
      *     ),
      *     @OA\Response(
@@ -176,8 +176,8 @@ class PermissionController extends Controller
      *         required=true,
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="name", type="string"),
-     *             @OA\Property(property="description", type="string"),
+     *             @OA\Property(property="verb", type="string"),
+     *             @OA\Property(property="uri", type="string"),
      *         )
      *     ),
      *     @OA\Response(

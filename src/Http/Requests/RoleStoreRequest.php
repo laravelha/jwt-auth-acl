@@ -8,7 +8,9 @@ class RoleStoreRequest extends FormRequest
 {
     public function authorize()
     {
-        return $this->user()->can('api.auth.roles.store');
+        $ability = $this->method() . '|' . $this->route()->uri;
+
+        return $this->user()->can($ability);
     }
 
     public function rules()

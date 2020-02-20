@@ -7,8 +7,7 @@ use Faker\Generator as Faker;
 
 $factory->define(Permission::class, function (Faker $faker) {
     return [
-        'name' => $faker->text(),
-        'action' => $faker->text(),
-        'description' => $faker->text(),
+        'verb' => $faker->word,
+        'uri' => $faker->url,
     ];
 });

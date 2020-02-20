@@ -8,7 +8,9 @@ class RoleUpdateRequest extends FormRequest
 {
     public function authorize()
     {
-        return $this->user()->can('api.auth.roles.update');
+        $ability = $this->method() . '|' . $this->route()->uri;
+
+        return $this->user()->can($ability);
     }
 
     public function rules()

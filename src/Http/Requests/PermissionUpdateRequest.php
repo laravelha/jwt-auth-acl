@@ -8,15 +8,16 @@ class PermissionUpdateRequest extends FormRequest
 {
     public function authorize()
     {
-        return $this->user()->can('api.auth.permissions.update');
+        $ability = $this->method() . '|' . $this->route()->uri;
+
+        return $this->user()->can($ability);
     }
 
     public function rules()
     {
         return [
-            'name' => 'required|string',
-            'action' => 'required|string',
-            'description' => 'nullable|string',
+            'verb' => 'required|string',
+            'uri' => 'required|string',
         ];
     }
 }

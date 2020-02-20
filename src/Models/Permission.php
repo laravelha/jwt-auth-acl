@@ -27,8 +27,8 @@ class Permission extends Model
     {
         return [
             'id' => '=',
-            'name' => 'like',
-            'action' => 'like',
+            'verb' => 'like',
+            'uri' => 'like',
         ];
     }
 }

@@ -29,9 +29,8 @@ class PermissionControllerTest extends TestCase
         $response->assertJsonStructure([
             'data' => [
                 '*' => [
-                    'name',
-                    'action',
-                    'description',
+                    'verb',
+                    'uri',
                 ]
             ],
             'links' => ['first', 'last', 'prev', 'next'],
@@ -49,8 +48,8 @@ class PermissionControllerTest extends TestCase
     {
         $response = $this->json('POST', self::BASE_URI, [], $this->headers);
 
-        $response->assertJsonValidationErrors('name');
-        $response->assertJsonValidationErrors('action');
+        $response->assertJsonValidationErrors('verb');
+        $response->assertJsonValidationErrors('uri');
     }
 
     /**

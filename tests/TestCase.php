@@ -10,6 +10,7 @@ use Laravelha\Auth\Models\User;
 use Laravelha\Auth\Providers\AuthServiceProvider;
 use Laravelha\Auth\Providers\RouteServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
+use PermissionsTableSeeder;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Providers\LaravelServiceProvider as JWTAuthServiceProvider;
 
@@ -29,16 +30,10 @@ abstract class TestCase extends Orchestra
 
         $this->createPermissions();
 
-        $this->role = factory(Role::class)->create(['name' => 'admin']);
-        $this->role->permissions()->attach($this->permissions);
-
-        $this->user = factory(User::class)->create();
-        $this->user->roles()->attach($this->role);
-
         $this->headers = ['Authorization' => 'Bearer ' . JWTAuth::fromUser($this->user)];
 
-        foreach (Permission::all() as $permission) {
-            Gate::define($permission->name, function (User $user) use ($permission) {
+        foreach ($this->permissions as $permission) {
+            Gate::define($permission->verb . '|' . $permission->uri, function (User $user) use ($permission) {
                 return $user->hasPermission($permission);
             });
         }
@@ -85,26 +80,11 @@ abstract class TestCase extends Orchestra
      */
     protected function createPermissions()
     {
-        $this->permissions[] = factory(Permission::class)->create(['name' => 'api.auth.logout']);
-        $this->permissions[] = factory(Permission::class)->create(['name' => 'api.auth.refresh']);
-        $this->permissions[] = factory(Permission::class)->create(['name' => 'api.auth.me']);
+        require_once './database/seeds/PermissionsTableSeeder.php';
+        (new PermissionsTableSeeder())->run();
 
-        $this->permissions[] = factory(Permission::class)->create(['name' => 'api.auth.permissions.index']);
-        $this->permissions[] = factory(Permission::class)->create(['name' => 'api.auth.permissions.store']);
-        $this->permissions[] = factory(Permission::class)->create(['name' => 'api.auth.permissions.show']);
-        $this->permissions[] = factory(Permission::class)->create(['name' => 'api.auth.permissions.update']);
-        $this->permissions[] = factory(Permission::class)->create(['name' => 'api.auth.permissions.destroy']);
-
-        $this->permissions[] = factory(Permission::class)->create(['name' => 'api.auth.roles.index']);
-        $this->permissions[] = factory(Permission::class)->create(['name' => 'api.auth.roles.store']);
-        $this->permissions[] = factory(Permission::class)->create(['name' => 'api.auth.roles.show']);
-        $this->permissions[] = factory(Permission::class)->create(['name' => 'api.auth.roles.update']);
-        $this->permissions[] = factory(Permission::class)->create(['name' => 'api.auth.roles.destroy']);
-
-        $this->permissions[] = factory(Permission::class)->create(['name' => 'api.auth.users.index']);
-        $this->permissions[] = factory(Permission::class)->create(['name' => 'api.auth.users.store']);
-        $this->permissions[] = factory(Permission::class)->create(['name' => 'api.auth.users.show']);
-        $this->permissions[] = factory(Permission::class)->create(['name' => 'api.auth.users.update']);
-        $this->permissions[] = factory(Permission::class)->create(['name' => 'api.auth.users.destroy']);
+        $this->user = User::find(1);
+        $this->role = Role::find(1);
+        $this->permissions = Permission::all();
     }
 }

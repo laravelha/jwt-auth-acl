@@ -43,10 +43,7 @@ class PermissionsTableSeeder extends Seeder
                 continue;
             }
 
-            $permission = Permission::create([
-                'name' => $route->getName(),
-                'action' => ltrim($route->getActionName(), '\\'),
-            ]);
+            $permission = $this->persistPermission($route);
 
             $role->permissions()->attach($permission);
         }
@@ -80,9 +77,30 @@ class PermissionsTableSeeder extends Seeder
     private function shouldIgnore(Route $route): bool
     {
         return (
-            ! in_array('auth:api', $route->gatherMiddleware()) ||
-            ! $route->getName() ||
-            ! Permission::where('name', $route->getName())
+            ! in_array('ha.acl', $route->gatherMiddleware()) ||
+            ! $route->uri ||
+            ! Permission::whereIn('verb', $route->methods)->where('uri', $route->uri)
         );
+    }
+
+    /**
+     * @param $route
+     * @return array
+     */
+    private function persistPermission($route)
+    {
+        $permission = [];
+        foreach ($route->methods as $method) {
+            if (in_array($method, ['HEAD', 'PATCH'])) {
+                continue;
+            }
+
+            $permission = Permission::create([
+                'verb' => $method,
+                'uri' => $route->uri,
+            ]);
+        }
+
+        return $permission;
     }
 }

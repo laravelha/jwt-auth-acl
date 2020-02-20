@@ -19,7 +19,9 @@ class Authorize
      */
     public function handle(Request $request, Closure $next)
     {
-        $this->authorize($request->route()->getName());
+        $ability = $request->method() . '|' . $request->route()->uri;
+
+        $this->authorize($ability);
 
         return $next($request);
     }
