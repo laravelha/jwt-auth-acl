@@ -154,6 +154,66 @@ class RoleControllerTest extends TestCase
     /**
      * @test
      */
+    public function roleCanBeUpdatedWithPermissions()
+    {
+        $roleFakes = factory(Role::class, 2)->make();
+        $attributes = $roleFakes->first()->toArray();
+
+        $permissions = factory(Permission::class, 5)->create();
+        $attributes['permissions'] = $permissions->pluck('id')->values();
+
+        $this->json('POST', self::BASE_URI, $attributes, $this->headers);
+
+        $role  = Role::first();
+
+        $attributes = $roleFakes->last()->toArray();
+        $permissions = factory(Permission::class, 5)->create();
+        $attributes['permissions'] = $permissions->pluck('id')->values();
+
+        $response = $this->json('PUT', self::BASE_URI . '/' . $role->id, $attributes, $this->headers);
+
+        $response->assertStatus(200);
+
+        $this->assertDatabaseHas('roles', $roleFakes->last()->getAttributes());
+
+        $data = $response->decodeResponseJson()['data'];
+        foreach ($attributes['permissions'] as $permissionId)
+        {
+            $this->assertDatabaseHas('permission_role', [
+                'permission_id' => $permissionId,
+                'role_id' => $data['id'],
+            ]);
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function roleCannotBeUpdatedWithEmptyPermissions()
+    {
+        $roleFakes = factory(Role::class, 2)->make();
+        $attributes = $roleFakes->first()->toArray();
+
+        $permissions = factory(Permission::class, 5)->create();
+        $attributes['permissions'] = $permissions->pluck('id')->values();
+
+        $this->json('POST', self::BASE_URI, $attributes, $this->headers);
+
+        $role  = Role::first();
+
+        $attributes = $roleFakes->last()->toArray();
+        $attributes['permissions'] = [];
+
+        $response = $this->json('PUT', self::BASE_URI . '/' . $role->id, $attributes, $this->headers);
+
+        $response->assertStatus(422);
+
+        $response->assertJsonValidationErrors('permissions');
+    }
+
+    /**
+     * @test
+     */
     public function roleCanBeDeleted()
     {
         $roleFake = factory(Role::class)->make();

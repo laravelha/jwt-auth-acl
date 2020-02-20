@@ -68,4 +68,25 @@ class Role extends Model
 
         return $model;
     }
+
+    /**
+     * @param array $attributes
+     * @param array $options
+     * @return bool
+     */
+    public function update(array $attributes = [], array $options = [])
+    {
+        $permissions = $attributes['permissions'] ?? null;
+        if ($permissions) {
+            unset($attributes['permissions']);
+        }
+
+        $updated = parent::update($attributes, $options);
+
+        if ($updated && $permissions) {
+            $this->permissions()->sync($permissions);
+        }
+
+        return $updated;
+    }
 }
