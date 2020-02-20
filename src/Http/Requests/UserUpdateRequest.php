@@ -21,6 +21,7 @@ class UserUpdateRequest extends FormRequest
             'email_verified_at' => 'nullable',
             'password' => 'required|string|min:8|unique:users,email,' . $user->id,
             'remember_token' => 'nullable|string|max:100',
+            'roles' => 'sometimes|required',
         ];
     }
 }

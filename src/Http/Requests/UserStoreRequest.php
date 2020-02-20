@@ -19,6 +19,7 @@ class UserStoreRequest extends FormRequest
             'email_verified_at' => 'nullable',
             'password' => 'required|string|min:8',
             'remember_token' => 'nullable|string|max:100',
+            'roles' => 'sometimes|required',
         ];
     }
 }

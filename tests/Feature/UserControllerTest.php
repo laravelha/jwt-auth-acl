@@ -2,6 +2,7 @@
 
 namespace Laravelha\Auth\Tests\Feature;
 
+use Laravelha\Auth\Models\Role;
 use Laravelha\Auth\Models\User;
 use Laravelha\Auth\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -72,6 +73,54 @@ class UserControllerTest extends TestCase
         $this->assertCount($count + 1, User::all());
 
         $this->assertDatabaseHas('users', $userFake->getAttributes());
+    }
+
+    /**
+     * @test
+     */
+    public function userCanBeCreatedWithRoles()
+    {
+        $userFake = factory(User::class)->make();
+        $attributes = $userFake->toArray();
+
+        $roles = factory(Role::class, 10)->create();
+        $attributes['roles'] = $roles->pluck('id')->values();
+
+        $count = User::count();
+
+        $response = $this->json('POST', self::BASE_URI, $attributes, $this->headers);
+
+        $response->assertStatus(201);
+
+        $this->assertCount($count + 1, User::all());
+
+        $this->assertDatabaseHas('users', $userFake->getAttributes());
+
+        $data = $response->decodeResponseJson()['data'];
+        foreach ($attributes['roles'] as $roleId)
+        {
+            $this->assertDatabaseHas('role_user', [
+                'role_id' => $roleId,
+                'user_id' => $data['id'],
+            ]);
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function roleCannotBeCreatedWithEmptyRoles()
+    {
+        $userFake = factory(User::class)->make();
+        $attributes = $userFake->toArray();
+
+        $attributes['roles'] = [];
+
+        $response = $this->json('POST', self::BASE_URI, $attributes, $this->headers);
+
+        $response->assertStatus(422);
+
+        $response->assertJsonValidationErrors('roles');
     }
 
     /**

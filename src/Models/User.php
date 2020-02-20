@@ -2,6 +2,8 @@
 
 namespace Laravelha\Auth\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -74,5 +76,46 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims(): array
     {
         return [];
+    }
+
+    /**
+     * @param array $attributes
+     * @return Builder|Model
+     */
+    public static function create(array $attributes = [])
+    {
+        $permissions = $attributes['roles'] ?? null;
+        if ($permissions) {
+            unset($attributes['roles']);
+        }
+
+        $model = static::query()->create($attributes);
+
+        if ($permissions) {
+            $model->roles()->attach($permissions);
+        }
+
+        return $model;
+    }
+
+    /**
+     * @param array $attributes
+     * @param array $options
+     * @return bool
+     */
+    public function update(array $attributes = [], array $options = [])
+    {
+        $permissions = $attributes['roles'] ?? null;
+        if ($permissions) {
+            unset($attributes['roles']);
+        }
+
+        $updated = parent::update($attributes, $options);
+
+        if ($updated && $permissions) {
+            $this->roles()->sync($permissions);
+        }
+
+        return $updated;
     }
 }
