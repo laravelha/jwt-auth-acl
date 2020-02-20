@@ -2,6 +2,7 @@
 
 namespace Laravelha\Auth\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Laravelha\Support\Traits\RequestQueryBuildable;
@@ -46,5 +47,25 @@ class Role extends Model
             'id' => '=',
             'name' => 'like',
         ];
+    }
+
+    /**
+     * @param array $attributes
+     * @return Builder|Model
+     */
+    public static function create(array $attributes = [])
+    {
+        $permissions = $attributes['permissions'] ?? null;
+        if ($permissions) {
+            unset($attributes['permissions']);
+        }
+
+        $model = static::query()->create($attributes);
+
+        if ($permissions) {
+            $model->permissions()->attach($permissions);
+        }
+
+        return $model;
     }
 }
