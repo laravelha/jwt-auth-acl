@@ -127,12 +127,9 @@ class UserControllerTest extends TestCase
      */
     public function userCanBeDisplayed()
     {
-        $userFake = factory(User::class)->make();
-        $this->json('POST', self::BASE_URI, $userFake->toArray(), $this->headers);
+        $userFake = factory(User::class)->create();
 
-        $user  = User::first();
-
-        $response = $this->json('GET', self::BASE_URI . '/' . $user->id);
+        $response = $this->json('GET', self::BASE_URI . '/' . $userFake->id, [],  $this->headers);
 
         $response->assertStatus(200);
     }
@@ -142,18 +139,14 @@ class UserControllerTest extends TestCase
      */
     public function userCanBeUpdated()
     {
-        $this->withoutExceptionHandling();
+        $userCreated = factory(User::class)->create();
+        $userMade = factory(User::class)->make();
 
-        $userFakes = factory(User::class, 2)->make();
-        $this->json('POST', self::BASE_URI, $userFakes->first()->toArray(), $this->headers);
-
-        $user  = User::first();
-
-        $response = $this->json('PUT', self::BASE_URI . '/' . $user->id, $userFakes->last()->toArray(), $this->headers);
+        $response = $this->json('PUT', self::BASE_URI . '/' . $userCreated->id, $userMade->toArray(), $this->headers);
 
         $response->assertStatus(200);
 
-        $this->assertDatabaseHas('users', $userFakes->last()->getAttributes());
+        $this->assertDatabaseHas('users', $userMade->getAttributes());
     }
 
     /**
@@ -161,18 +154,11 @@ class UserControllerTest extends TestCase
      */
     public function userCanBeDeleted()
     {
-        $userFake = factory(User::class)->make();
-        $count = User::count();
-        $this->json('POST', self::BASE_URI, $userFake->toArray(), $this->headers);
+        $userFake = factory(User::class)->create();
 
-        $this->assertCount($count + 1, User::all());
-
-        $user  = User::all()->last();
-
-        $response = $this->json('DELETE', self::BASE_URI . '/' . $user->id, [], $this->headers);
+        $response = $this->json('DELETE', self::BASE_URI . '/' . $userFake->id, [], $this->headers);
 
         $response->assertStatus(204);
-        $this->assertCount($count, User::all());
 
         $this->assertDatabaseMissing('users', $userFake->getAttributes());
     }
