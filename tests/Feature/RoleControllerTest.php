@@ -57,8 +57,6 @@ class RoleControllerTest extends TestCase
      */
     public function roleCanBeCreated()
     {
-        $this->withoutExceptionHandling();
-
         $count = Role::count();
         $roleFake = factory(Role::class)->make();
 
@@ -123,12 +121,9 @@ class RoleControllerTest extends TestCase
      */
     public function roleCanBeDisplayed()
     {
-        $roleFake = factory(Role::class)->make();
-        $this->json('POST', self::BASE_URI, $roleFake->toArray(), $this->headers);
+        $roleFake = factory(Role::class)->create();
 
-        $role  = Role::first();
-
-        $response = $this->json('GET', self::BASE_URI . '/' . $role->id);
+        $response = $this->json('GET', self::BASE_URI . '/' . $roleFake->id, [], $this->headers);
 
         $response->assertStatus(200);
     }
@@ -138,16 +133,14 @@ class RoleControllerTest extends TestCase
      */
     public function roleCanBeUpdated()
     {
-        $roleFakes = factory(Role::class, 2)->make();
-        $this->json('POST', self::BASE_URI, $roleFakes->first()->toArray(), $this->headers);
+        $roleCreated = factory(Role::class)->create();
+        $roleMade = factory(Role::class)->make();
 
-        $role  = Role::first();
-
-        $response = $this->json('PUT', self::BASE_URI . '/' . $role->id, $roleFakes->last()->toArray(), $this->headers);
+        $response = $this->json('PUT', self::BASE_URI . '/' . $roleCreated->id, $roleMade->toArray(), $this->headers);
 
         $response->assertStatus(200);
 
-        $this->assertDatabaseHas('roles', $roleFakes->last()->getAttributes());
+        $this->assertDatabaseHas('roles', $roleMade->getAttributes());
     }
 
     /**
@@ -155,25 +148,18 @@ class RoleControllerTest extends TestCase
      */
     public function roleCanBeUpdatedWithPermissions()
     {
-        $roleFakes = factory(Role::class, 2)->make();
-        $attributes = $roleFakes->first()->toArray();
+        $roleCreated = factory(Role::class)->create();
+        $roleMade = factory(Role::class)->make();
 
+        $attributes = $roleMade->toArray();
         $permissions = factory(Permission::class, 5)->create();
         $attributes['permissions'] = $permissions->pluck('id')->values();
 
-        $this->json('POST', self::BASE_URI, $attributes, $this->headers);
-
-        $role  = Role::first();
-
-        $attributes = $roleFakes->last()->toArray();
-        $permissions = factory(Permission::class, 5)->create();
-        $attributes['permissions'] = $permissions->pluck('id')->values();
-
-        $response = $this->json('PUT', self::BASE_URI . '/' . $role->id, $attributes, $this->headers);
+        $response = $this->json('PUT', self::BASE_URI . '/' . $roleCreated->id, $attributes, $this->headers);
 
         $response->assertStatus(200);
 
-        $this->assertDatabaseHas('roles', $roleFakes->last()->getAttributes());
+        $this->assertDatabaseHas('roles', $roleMade->getAttributes());
 
         $data = $response->decodeResponseJson()['data'];
         foreach ($attributes['permissions'] as $permissionId) {
@@ -189,20 +175,13 @@ class RoleControllerTest extends TestCase
      */
     public function roleCannotBeUpdatedWithEmptyPermissions()
     {
-        $roleFakes = factory(Role::class, 2)->make();
-        $attributes = $roleFakes->first()->toArray();
+        $roleCreated = factory(Role::class)->create();
+        $roleMade = factory(Role::class)->make();
 
-        $permissions = factory(Permission::class, 5)->create();
-        $attributes['permissions'] = $permissions->pluck('id')->values();
-
-        $this->json('POST', self::BASE_URI, $attributes, $this->headers);
-
-        $role  = Role::first();
-
-        $attributes = $roleFakes->last()->toArray();
+        $attributes = $roleMade->toArray();
         $attributes['permissions'] = [];
 
-        $response = $this->json('PUT', self::BASE_URI . '/' . $role->id, $attributes, $this->headers);
+        $response = $this->json('PUT', self::BASE_URI . '/' . $roleCreated->id, $attributes, $this->headers);
 
         $response->assertStatus(422);
 
@@ -214,18 +193,11 @@ class RoleControllerTest extends TestCase
      */
     public function roleCanBeDeleted()
     {
-        $roleFake = factory(Role::class)->make();
-        $count = Role::count();
-        $this->json('POST', self::BASE_URI, $roleFake->toArray(), $this->headers);
+        $roleFake = factory(Role::class)->create();
 
-        $this->assertCount($count + 1, Role::all());
-
-        $role  = Role::all()->last();
-
-        $response = $this->json('DELETE', self::BASE_URI . '/' . $role->id, [], $this->headers);
+        $response = $this->json('DELETE', self::BASE_URI . '/' . $roleFake->id, [], $this->headers);
 
         $response->assertStatus(204);
-        $this->assertCount($count, Role::all());
 
         $this->assertDatabaseMissing('roles', $roleFake->getAttributes());
     }
