@@ -54,6 +54,8 @@ axios.post('/api/auth/roles', {
     name: 'Name',
     description: 'Description'
 });
+```
+
 cUrl
 ```bash
 curl -X POST "APP_URL/api/auth/login" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"email\": \"admin@laravelha.com\", \"password\": \"password\"}"
