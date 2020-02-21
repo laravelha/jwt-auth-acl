@@ -74,12 +74,9 @@ class PermissionControllerTest extends TestCase
      */
     public function permissionCanBeDisplayed()
     {
-        $permissionFake = factory(Permission::class)->make();
-        $this->json('POST', self::BASE_URI, $permissionFake->toArray(), $this->headers);
+        $permissionFake = factory(Permission::class)->create();
 
-        $permission  = Permission::first();
-
-        $response = $this->json('GET', self::BASE_URI . '/' . $permission->id);
+        $response = $this->json('GET', self::BASE_URI . '/' . $permissionFake->id, [], $this->headers);
 
         $response->assertStatus(200);
     }
@@ -89,18 +86,14 @@ class PermissionControllerTest extends TestCase
      */
     public function permissionCanBeUpdated()
     {
-        $permissionFakes = factory(Permission::class, 2)->make();
-        $this->json('POST', self::BASE_URI, $permissionFakes->first()->toArray(), $this->headers);
+        $permissionCreated = factory(Permission::class)->create();
+        $permissionMade = factory(Permission::class)->make();
 
-        $permission  = Permission::first();
-
-        $lastPermissionArray = $permissionFakes->last()->toArray();
-
-        $response = $this->json('PUT', self::BASE_URI . '/' . $permission->id, $lastPermissionArray, $this->headers);
+        $response = $this->json('PUT', self::BASE_URI . '/' . $permissionCreated->id, $permissionMade->toArray(), $this->headers);
 
         $response->assertStatus(200);
 
-        $this->assertDatabaseHas('permissions', $permissionFakes->last()->getAttributes());
+        $this->assertDatabaseHas('permissions', $permissionMade->getAttributes());
     }
 
     /**
@@ -108,18 +101,11 @@ class PermissionControllerTest extends TestCase
      */
     public function permissionCanBeDeleted()
     {
-        $permissionFake = factory(Permission::class)->make();
-        $count = Permission::count();
-        $this->json('POST', self::BASE_URI, $permissionFake->toArray(), $this->headers);
+        $permissionFake = factory(Permission::class)->create();
 
-        $this->assertCount($count + 1, Permission::all());
-
-        $permission  = Permission::all()->last();
-
-        $response = $this->json('DELETE', self::BASE_URI . '/' . $permission->id, [], $this->headers);
+        $response = $this->json('DELETE', self::BASE_URI . '/' . $permissionFake->id, [], $this->headers);
 
         $response->assertStatus(204);
-        $this->assertCount($count, Permission::all());
 
         $this->assertDatabaseMissing('permissions', $permissionFake->getAttributes());
     }
