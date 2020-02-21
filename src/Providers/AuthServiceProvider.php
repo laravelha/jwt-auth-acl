@@ -53,7 +53,6 @@ class AuthServiceProvider extends ServiceProvider implements DeferrableProvider
         return [AbilitiesService::class];
     }
 
-
     /**
      * Console-specific booting.
      *
