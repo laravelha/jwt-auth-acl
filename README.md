@@ -133,3 +133,7 @@ cUrl
 curl -X POST "APP_URL/api/auth/login" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"email\": \"admin@laravelha.com\", \"password\": \"password\"}"
 curl -X PUT "APP_URL/api/auth/users/ID" -H "accept: application/json" -H "Authorization: Bearer TOKEN" -d "{ \"roles\": \"[ID_R1, ID_R2, ID_R3..]\"}"
 ```
+
+## Screenshots
+
+![Swagger](/screenshots/swagger.png)
