@@ -23,7 +23,8 @@ the same name of the route within any role he has
 * Add `ha.acl` on your protected routes
 * Publish seeder `php artisan vendor:publish --foce --tag ha-auth-seeds`
 * Run `php artisan db:seed --class=PermissionsTableSeeder` to populate permissions table
-* Create roles
+
+### Create roles
 Tinker
 ```bash
 php artisan tinker
@@ -59,14 +60,13 @@ curl -X POST "APP_URL/api/auth/login" -H "accept: application/json" -H "Content-
 curl -X POST "APP_URL/api/auth/roles" -H "accept: application/json" -H "Authorization: Bearer TOKEN" -d "{ \"name\": \"Name\", \"description\": \"Description\"}"
 ``````
 
-* Sync role permissions
+### Sync role permissions
 Tinker
 ```bash
 php artisan tinker
 $role = Role::find(ID)
 $role->permissions->sync([ID_P1, ID_P2, ID_P3..])
 ```
-GuzzleHttp
 GuzzleHttp
 ```php
 $client = new GuzzleHttp\Client(['base_uri' => APP_URL]);
@@ -95,7 +95,8 @@ cUrl
 curl -X POST "APP_URL/api/auth/login" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"email\": \"admin@laravelha.com\", \"password\": \"password\"}"
 curl -X PUT "APP_URL/api/auth/roles/ID" -H "accept: application/json" -H "Authorization: Bearer TOKEN" -d "{ \"permissions\": \"[ID_P1, ID_P2, ID_P3..]\"}"
 ```
-* Sync user roles
+
+### Sync user roles
 Tinker
 ```bash
 php artisan tinker
