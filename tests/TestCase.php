@@ -3,7 +3,7 @@
 namespace Laravelha\Auth\Tests;
 
 use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Gate;
+use Laravelha\Auth\Facades\Abilities;
 use Laravelha\Auth\Models\Permission;
 use Laravelha\Auth\Models\Role;
 use Laravelha\Auth\Models\User;
@@ -16,9 +16,19 @@ use Tymon\JWTAuth\Providers\LaravelServiceProvider as JWTAuthServiceProvider;
 
 abstract class TestCase extends Orchestra
 {
-    protected $permissions;
+    /**
+     * @var Role
+     */
     protected $role;
+
+    /**
+     * @var User
+     */
     protected $user;
+
+    /**
+     * @var array
+     */
     protected $headers;
 
     /**
@@ -32,11 +42,7 @@ abstract class TestCase extends Orchestra
 
         $this->headers = ['Authorization' => 'Bearer ' . JWTAuth::fromUser($this->user)];
 
-        foreach ($this->permissions as $permission) {
-            Gate::define($permission->verb . '|' . $permission->uri, function (User $user) use ($permission) {
-                return $user->hasPermission($permission);
-            });
-        }
+        Abilities::defineAbilities();
     }
 
     /**
@@ -85,6 +91,5 @@ abstract class TestCase extends Orchestra
 
         $this->user = User::find(1);
         $this->role = Role::find(1);
-        $this->permissions = Permission::all();
     }
 }

@@ -2,13 +2,14 @@
 
 namespace Laravelha\Auth\Providers;
 
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Contracts\Support\DeferrableProvider;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\ServiceProvider;
+use Laravelha\Auth\Facades\Abilities;
 use Laravelha\Auth\Models\Permission;
-use Laravelha\Auth\Models\User;
+use Laravelha\Auth\Services\AbilitiesService;
 
-class AuthServiceProvider extends ServiceProvider
+class AuthServiceProvider extends ServiceProvider implements DeferrableProvider
 {
     /**
      * Relative path to the root
@@ -25,12 +26,33 @@ class AuthServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(self::ROOT_PATH . '/database/migrations');
         $this->loadFactoriesFrom(self::ROOT_PATH . '/database/factories');
 
-        $this->registerPermissions();
-
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
         }
     }
+
+    /**
+     * Register the package services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        $this->app->singleton('ha.abilities', function () {
+            return new AbilitiesService(Permission::all());
+        });
+    }
+
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return [AbilitiesService::class];
+    }
+
 
     /**
      * Console-specific booting.
@@ -47,25 +69,5 @@ class AuthServiceProvider extends ServiceProvider
         $this->publishes([
             self::ROOT_PATH . '/database/' . $permissionSeederPath => database_path($permissionSeederPath),
         ], 'ha-auth-seeds');
-    }
-
-    /**
-     * Define Permissions with Gate
-     *
-     * @return void
-     */
-    protected function registerPermissions()
-    {
-        try {
-            Schema::hasTable('permissions');
-
-            foreach (Permission::all() as $permission) {
-                Gate::define($permission->verb . '|' . $permission->uri, function (User $user) use ($permission) {
-                    return $user->hasPermission($permission);
-                });
-            }
-        } catch (\Exception $exception) {
-            return;
-        }
     }
 }
