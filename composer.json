@@ -4,10 +4,10 @@
     "keywords": ["jwt", "auth", "acl"],
     "require": {
         "php": "^7.2",
-        "darkaonline/l5-swagger": "^6.0",
-        "illuminate/support": "^6.0",
-        "laravelha/support": "^1.0.0",
-        "tymon/jwt-auth": "dev-develop"
+        "darkaonline/l5-swagger": "^6.0|^7.0",
+        "illuminate/support": "^6.0|^7.0",
+        "laravelha/support": "^1.0",
+        "tymon/jwt-auth": "^1.0"
     },
     "require-dev": {
         "orchestra/testbench": "^4.0",
